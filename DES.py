@@ -17,6 +17,11 @@ def cipher(message, key, mode='encrypt'):
         p_box_result = PBoxPermutation(s_box_result)
         xor2 = xor(l, p_box_result)
         text = r + xor2
+        # # 实现学号对应轮加密结果记录
+        # if i == (2021141530127%16):
+        #     mytext = text[32:] + text[:32]
+        #     myoutput = InverseIpPermutation(mytext)
+        #     print(f'第{2021141530127%16}轮加密的输出为：{myoutput}')
 
     text = text[32:] + text[:32]
     return InverseIpPermutation(text)
@@ -106,9 +111,9 @@ class DES_encrypter:
         """
         output = []
         length = len(self.message)
-        times, mod = length // 8, length % 8
+        times, mod = length // 32, length % 32
         if mod:
-            space = 8 - mod
+            space = 32 - mod
             while (space > 0):
                 self.message = self.message.append("0")
                 space -= 1
@@ -116,10 +121,10 @@ class DES_encrypter:
 
         register = self.iv
         for i in range(times):
-            submessage = self.message[i * 8:i * 8 + 8]
+            submessage = self.message[i * 32:i * 32 + 32]
             code = cipher(register, self.key, 'encrypt')
-            result = xor(code[0:8], submessage)
-            register = register[8:] + result[0:8]
+            result = xor(code[0:32], submessage)
+            register = register[32:] + result[0:32]
             output.extend(result)
 
         return output
@@ -130,9 +135,9 @@ class DES_encrypter:
         """
         output = []
         length = len(self.message)
-        times, mod = length // 8, length % 8
+        times, mod = length // 32, length % 32
         if mod:
-            space = 8 - mod
+            space = 32 - mod
             while (space > 0):
                 self.message = self.message.append("0")
                 space -= 1
@@ -140,10 +145,10 @@ class DES_encrypter:
 
         register = self.iv
         for i in range(times):
-            submessage = self.message[i * 8:i * 8 + 8]
+            submessage = self.message[i * 32:i * 32 + 32]
             code = cipher(register, self.key, 'encrypt')
-            result = xor(code[0:8], submessage)
-            register = register[8:] + code[0:8]
+            result = xor(code[0:32], submessage)
+            register = register[32:] + code[0:32]
             output.extend(result)
 
         return output
@@ -209,10 +214,10 @@ class DES_decrypter:
         """密码反馈模式"""
         output = []
         length = len(self.cipher)
-        times, mod = length // 8, length % 8
+        times, mod = length // 32, length % 32
 
         if mod:
-            space = 8 - mod
+            space = 32 - mod
             while (space > 0):
                 self.cipher = self.cipher.append("0")
                 space -= 1
@@ -220,10 +225,10 @@ class DES_decrypter:
 
         register = self.iv
         for i in range(times):
-            subcipher = self.cipher[i * 8:i * 8 + 8]
+            subcipher = self.cipher[i * 32:i * 32 + 32]
             code = cipher(register, self.key, 'encrypt')
-            result = xor(code[0:8], subcipher)
-            register = register[8:] + subcipher[0:8]
+            result = xor(code[0:32], subcipher)
+            register = register[32:] + subcipher[0:32]
             output.extend(result)
 
         return output
@@ -232,10 +237,10 @@ class DES_decrypter:
         """密码反馈模式"""
         output = []
         length = len(self.cipher)
-        times, mod = length // 8, length % 8
+        times, mod = length // 32, length % 32
 
         if mod:
-            space = 8 - mod
+            space = 32 - mod
             while (space > 0):
                 self.cipher = self.cipher.append("0")
                 space -= 1
@@ -243,10 +248,10 @@ class DES_decrypter:
 
         register = self.iv
         for i in range(times):
-            subcipher = self.cipher[i * 8:i * 8 + 8]
+            subcipher = self.cipher[i * 32:i * 32 + 32]
             code = cipher(register, self.key, 'encrypt')
-            result = xor(code[0:8], subcipher)
-            register = register[8:] + code[0:8]
+            result = xor(code[0:32], subcipher)
+            register = register[32:] + code[0:32]
             output.extend(result)
 
         return output
