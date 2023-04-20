@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
+import os
 
 from util import *
+import argparse
 
 
 def cipher(message, key, mode='encrypt'):
@@ -248,3 +250,40 @@ class DES_decrypter:
             output.extend(result)
 
         return output
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='test')
+    parser.add_argument('-p', '--plainfile', default='des_plain.txt', help='指定明文文件的位置和名称')
+    parser.add_argument('-k', '--keyfile', default='des_key.txt', help='指定密钥文件的位置和名称')
+    parser.add_argument('-v', '--vifile', default='des_vi.txt', help='指定初始化向量文件的位置和名称')
+    parser.add_argument('-m', '--mode', default='ECB', help='指定加密的操作模式')
+    parser.add_argument('-c', '--cipherfile', default='des_cipher.txt', help='指定密文文件的位置和名称')
+
+    args = parser.parse_args()
+
+    global key, iv
+    with open(args.keyfile) as f:
+        key = f.readlines()
+        key = [x.strip() for x in key if x.strip() != '']
+    f.close()
+    key = "".join(key)
+    with open(args.vifile) as f:
+        iv = f.readlines()
+        iv = [x.strip() for x in iv if x.strip() != '']
+    f.close()
+    iv = "".join(iv)
+
+    with open(args.plainfile) as f:
+        plaintext = f.readlines()
+        plaintext = [x.strip() for x in plaintext if x.strip() != '']
+    f.close()
+    plaintext = "".join(plaintext)
+
+    crypter= DES_encrypter(plaintext, key, args.mode, iv)
+    cipher= crypter.ciphertext
+
+    with open(args.cipherfile, "a") as f:
+        f.write(cipher.upper() + "\n")
+    f.close()
+    input('加密完成，密文在'+args.cipherfile)
